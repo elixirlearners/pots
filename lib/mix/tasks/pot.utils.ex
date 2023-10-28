@@ -19,8 +19,9 @@ defmodule PotUtils do
   """
   def app_name do
     config = Mix.Project.config()
+
     if Keyword.has_key?(config, :app) do
-      config[:app] |> Atom.to_string
+      config[:app] |> Atom.to_string()
     else
       Application.get_application(__MODULE__)
     end
@@ -61,7 +62,8 @@ defmodule PotUtils do
       System.cmd("docker", ["-v"])
       "docker"
     rescue
-      _ -> raise """
+      _ ->
+        raise """
         Pots requires a container runtime to function. The currently
         supported container run times are as follows. Please install one;
         - docker (https://docs.docker.com/engine/install/)
@@ -94,7 +96,7 @@ defmodule PotUtils do
   with `Docker` and end with `.pot`.
   """
   def get_all_docker_files do
-    {:ok, files} = File.ls
+    {:ok, files} = File.ls()
     files |> Enum.filter(&(String.starts_with?(&1, "Docker") && String.ends_with?(&1, ".pot")))
   end
 
@@ -118,7 +120,6 @@ defmodule PotUtils do
     runtime_cmd("container stop #{id}")
   end
 
-
   @doc """
   Returns a list of all docker containers, filtered by the label of
   `pot_<app-name>` in JSON format. If none are returned, it returns
@@ -127,6 +128,7 @@ defmodule PotUtils do
   """
   def get_docker_containers do
     {output, _} = runtime_cmd("container ls --filter label=pot_#{app_name()} --format {{json}}")
+
     if output != "" do
       Jason.decode!(output)
     else
@@ -142,8 +144,8 @@ defmodule PotUtils do
   """
   def print_containers do
     {output, _} = runtime_cmd("container ls --filter label=pot_#{app_name()}")
-    IO.puts "Containers"
-    IO.puts output
+    IO.puts("Containers")
+    IO.puts(output)
   end
 
   @doc """
@@ -154,6 +156,7 @@ defmodule PotUtils do
   """
   def get_docker_images do
     {output, _} = runtime_cmd("images --filter label=pot_#{app_name()} --format {{json}}")
+
     if output != "" do
       Jason.decode!(output)
     else
@@ -169,8 +172,8 @@ defmodule PotUtils do
   """
   def print_images do
     {output, _} = runtime_cmd("images --filter label=pot_#{app_name()}")
-    IO.puts "Images"
-    IO.puts output
+    IO.puts("Images")
+    IO.puts(output)
   end
 
   @doc """

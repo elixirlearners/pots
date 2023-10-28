@@ -2,17 +2,16 @@ defmodule Mix.Tasks.Pot.Clean do
   use Mix.Task
   require Logger
 
-
   @shortdoc "Cleanup files and containers created using Pots. Options [--files | --images | --containers]. No option defaults to all"
   @impl Mix.Task
-  def run ([]) do
+  def run([]) do
     Mix.Task.rerun("pot.clean", [:all])
   end
 
   @shortdoc "Cleanup files and containers created using Pots. Options [--files | --images | --containers]. No option defaults to all"
   @impl Mix.Task
   def run(args) do
-    Enum.each(args, &process_arg/1) 
+    Enum.each(args, &process_arg/1)
   end
 
   @doc """
@@ -24,12 +23,18 @@ defmodule Mix.Tasks.Pot.Clean do
   """
   def process_arg(arg) do
     case arg do
-      :all -> run_all()
-      "--files" -> remove_docker_files() 
-      "--images" -> 
+      :all ->
+        run_all()
+
+      "--files" ->
+        remove_docker_files()
+
+      "--images" ->
         stop_docker_containers()
         remove_docker_images()
-      "--containers" -> stop_docker_containers()
+
+      "--containers" ->
+        stop_docker_containers()
     end
   end
 
@@ -40,7 +45,7 @@ defmodule Mix.Tasks.Pot.Clean do
   - `stop_docker_containers/0`
   - `remove_docker_images/0`
   """
-  def run_all() do 
+  def run_all() do
     remove_docker_files()
     stop_docker_containers()
     remove_docker_images()
@@ -52,7 +57,7 @@ defmodule Mix.Tasks.Pot.Clean do
   """
   def stop_docker_containers do
     PotUtils.get_docker_containers()
-    |> Enum.each(fn con -> 
+    |> Enum.each(fn con ->
       Logger.info("Stopping container: #{List.first(con["Names"])}")
       PotUtils.stop_container(con)
     end)
@@ -63,8 +68,8 @@ defmodule Mix.Tasks.Pot.Clean do
   only affect images with the label `pot_<app-name>`
   """
   def remove_docker_images do
-    PotUtils.get_docker_images
-    |> Enum.each(fn img -> 
+    PotUtils.get_docker_images()
+    |> Enum.each(fn img ->
       Logger.info("Removing image: #{List.first(img["Names"])}")
       PotUtils.remove_image(img)
     end)
@@ -76,9 +81,10 @@ defmodule Mix.Tasks.Pot.Clean do
   with `.pot`
   """
   def remove_docker_files() do
-    {:ok, cwd} = File.cwd
+    {:ok, cwd} = File.cwd()
+
     PotUtils.get_all_docker_files()
-    |> Enum.each(fn file -> 
+    |> Enum.each(fn file ->
       Logger.info("Removing dockerfile at: #{cwd}/#{file}")
       File.rm("#{cwd}/#{file}")
     end)

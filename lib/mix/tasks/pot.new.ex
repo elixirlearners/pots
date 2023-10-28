@@ -3,7 +3,7 @@ defmodule Mix.Tasks.Pot.New do
 
   @shortdoc "Will generate a new Dockerfile for pot to use"
   @impl Mix.Task
-  def run ([]) do
+  def run([]) do
     Mix.Task.rerun("pot.new", [:no_name])
   end
 
@@ -13,8 +13,10 @@ defmodule Mix.Tasks.Pot.New do
     {dir, _resp} = System.cmd("pwd", [])
     app_name = PotUtils.app_name()
     docker_file = PotUtils.get_docker_file_for_pot(pot_name)
+
     case File.open("#{String.trim(dir)}/#{docker_file}", [:write]) do
-      {:ok, file} -> IO.binwrite(file, """
+      {:ok, file} ->
+        IO.binwrite(file, """
         FROM elixir:latest
 
         ARG SET_MIX_ENV=dev
@@ -34,8 +36,9 @@ defmodule Mix.Tasks.Pot.New do
 
         CMD ["sh", "-c", "_build/${MIX_ENV}/rel/#{app_name}/bin/#{app_name} start"]
         """)
-      _ -> raise "Unable to create docker file"
+
+      _ ->
+        raise "Unable to create docker file"
     end
   end
 end
-

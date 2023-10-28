@@ -14,7 +14,8 @@ TODO.
 - [ ] Allow selection of container runtime in config.
 - [ ] Provide better defaults for the Dockerfile.
 - [ ] Config options for how the containers are run. (e.g. a list of flags such as `--rm`, `-it`, ect.)
- 
+- [ ] Test with both `docker` and `nerdctl` 
+
 ## Requirements
 
 You will need one of the following container run times;
@@ -43,7 +44,9 @@ be found at <https://hexdocs.pm/pots>.
 ## Tasks
 
 `mix pot.new`
-> This task will generate a Dockerfile to be
+> This task will generate a Dockerfile to be used by Pots. This
+> is just a regular Dockerfile so you don't have to run it
+> specifically using Pots.
 
 `mix pot.build`
 > This will build the Dockerfile generated from `mix pot.new`. If

@@ -1,7 +1,7 @@
 defmodule Mix.Tasks.Pot.Build do
   use Mix.Task
   require Logger
-  
+
   @shortdoc "Builds the image from the Dockerfile created by pot"
   @impl Mix.Task
   def run([]) do
@@ -16,7 +16,6 @@ defmodule Mix.Tasks.Pot.Build do
     build_image(pot_name)
   end
 
-
   @doc """
   Takes in the runtime ["docker" | "podman" | "nerdctl"], the pot name
   passed in as arguments or `:no_name`. It will check to see
@@ -29,14 +28,17 @@ defmodule Mix.Tasks.Pot.Build do
   def build_image(pot_name) do
     docker_file = PotUtils.get_docker_file_for_pot(pot_name)
     Logger.info("Building dockerfile: #{docker_file}")
+
     if !File.exists?(docker_file) do
       Logger.info("Docker file not found, create file: #{docker_file}")
-      Mix.Task.run("pot.new",[])
+      Mix.Task.run("pot.new", [])
     end
+
     Logger.info("Creating dockerfile: #{docker_file}")
     app_name = PotUtils.app_name()
-    PotUtils.runtime_cmd("build -f #{docker_file} --build-arg MIX_ENV=dev -t #{app_name} --label pot_#{app_name}=pot")
+
+    PotUtils.runtime_cmd(
+      "build -f #{docker_file} --build-arg MIX_ENV=dev -t #{app_name} --label pot_#{app_name}=pot"
+    )
   end
 end
-
-
