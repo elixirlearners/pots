@@ -8,6 +8,7 @@ defmodule Pots.MixProject do
       elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
       description: description(),
+      package: package(),
       deps: deps(),
 
       # Docs
