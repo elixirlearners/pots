@@ -36,7 +36,7 @@ defmodule PotUtils do
       System.cmd("nerdctl", ["-v"])
       "nerdctl"
     catch
-      _ -> get_podman()
+      _, _-> get_podman()
     end
   end
 
@@ -49,7 +49,7 @@ defmodule PotUtils do
       System.cmd("podman", ["-v"])
       "podman"
     catch
-      _ -> get_docker()
+      _, _ -> get_docker()
     end
   end
 
@@ -61,8 +61,8 @@ defmodule PotUtils do
     try do
       System.cmd("docker", ["-v"])
       "docker"
-    rescue
-      _ ->
+    catch
+      _, _ ->
         raise """
         Pots requires a container runtime to function. The currently
         supported container run times are as follows. Please install one;
@@ -127,12 +127,10 @@ defmodule PotUtils do
   `<container-runtime> container ls --filter lable=pot_<app-name> --format {{json}}`
   """
   def get_docker_containers do
-    {output, _} = runtime_cmd("container ls --filter label=pot_#{app_name()} --format {{json}}")
-
-    if output != "" do
-      Jason.decode!(output)
-    else
-      []
+    {output, _} = runtime_cmd_output("container ls --filter label=pot_#{app_name()} --format {{json}}")
+    case output do
+      [] -> []
+      _ -> Jason.decode!(output)
     end
   end
 
@@ -143,7 +141,7 @@ defmodule PotUtils do
   `<container-runtime> container ls --filter lable=pot_<app-name>`
   """
   def print_containers do
-    {output, _} = runtime_cmd("container ls --filter label=pot_#{app_name()}")
+    {output, _} = runtime_cmd_output("container ls --filter label=pot_#{app_name()}")
     IO.puts("Containers")
     IO.puts(output)
   end
@@ -155,12 +153,10 @@ defmodule PotUtils do
   `<container-runtime> images --filter lable=pot_<app-name> --format {{json}}`
   """
   def get_docker_images do
-    {output, _} = runtime_cmd("images --filter label=pot_#{app_name()} --format {{json}}")
-
-    if output != "" do
-      Jason.decode!(output)
-    else
-      []
+    {output, _} = runtime_cmd_output("images --filter label=pot_#{app_name()} --format {{json}}")
+    case output do
+      [] -> []
+      _ -> Jason.decode!(output)
     end
   end
 
@@ -171,9 +167,18 @@ defmodule PotUtils do
   `<container-runtime> images --filter lable=pot_<app-name>`
   """
   def print_images do
-    {output, _} = runtime_cmd("images --filter label=pot_#{app_name()}")
+    {output, _} = runtime_cmd_output("images --filter label=pot_#{app_name()}")
     IO.puts("Images")
     IO.puts(output)
+  end
+
+  @doc """
+  Takes in the command to be run using the runtime returned from `PotUtils.get_runtime/0`.
+  Splits the `cmd` up and passes it to `System.cmd`. This one returns the output from
+  the command run unlike `runtime_cmd/1`
+  """
+  def runtime_cmd_output(cmd) do
+    System.cmd(get_runtime(), String.split(cmd, " "))
   end
 
   @doc """
