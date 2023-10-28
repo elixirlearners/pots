@@ -7,7 +7,7 @@ defmodule PotUtils do
 
   def app_name do
     config = Mix.Project.config()
-    if Keyword.keyword?(:app) do
+    if Keyword.has_key?(config, :app) do
       config.app |> Atom.to_string
     else
       Application.get_application(__MODULE__)
