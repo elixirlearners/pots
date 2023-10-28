@@ -63,7 +63,7 @@ defmodule PotUtils do
     if output != "" do
       Jason.decode!(output)
     else
-      %{}
+      []
     end
   end
 
@@ -80,7 +80,7 @@ defmodule PotUtils do
     if output != "" do
       Jason.decode!(output)
     else
-      %{}
+      []
     end
   end
 
