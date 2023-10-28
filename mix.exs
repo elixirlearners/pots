@@ -46,8 +46,8 @@ defmodule Pots.MixProject do
 
   defp package() do
     [
-      files: ~w(lib .formatter.exs mix.exs README* readme* LICENSE*
-                license* CHANGELOG* changelog* src),
+      files: ~w(lib .formatter.exs mix.exs README* LICENSE*
+                CHANGELOG* src),
       licenses: ["MIT"],
       links: %{"GitHub" => "https://github.com/elixirlearners/pots"}
     ]
