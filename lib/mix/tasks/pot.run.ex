@@ -12,7 +12,7 @@ defmodule Mix.Tasks.Pot.Run do
       Mix.Task.run("pot.build", [])
     end
     runtime = PotUtils.get_runtime()
-    app_name = Application.get_application(__MODULE__) |> Atom.to_string
+    app_name = PotUtils.app_name()
     Logger.info("Using container runtime: #{runtime}")
     inter_cmd = case interactive do
       "-i" -> "-i /app/_build/dev/rel/#{app_name}/bin/#{app_name} start"

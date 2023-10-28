@@ -21,7 +21,7 @@ defmodule Mix.Tasks.Pot.Build do
       Mix.Task.run("pot.new",[])
     end
     Logger.info("Creating dockerfile: #{docker_file}")
-    app_name = Application.get_application(__MODULE__) |> Atom.to_string
+    app_name = PotUtils.app_name()
     manager(runtime, "build -f #{docker_file} --build-arg MIX_ENV=dev -t #{app_name} --label pot_#{app_name}=pot")
   end
 

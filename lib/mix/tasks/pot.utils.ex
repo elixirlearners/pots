@@ -5,6 +5,15 @@ defmodule PotUtils do
     get_podman()
   end
 
+  def app_name do
+    config = Mix.Project.config()
+    if Keyword.keyword?(:app) do
+      config.app |> Atom.to_string
+    else
+      Application.get_application(__MODULE__)
+    end
+  end
+
   defp get_podman do
     try do
       System.cmd("podman", ["-v"])
@@ -49,9 +58,8 @@ defmodule PotUtils do
 
 
   def get_docker_containers do
-    app_name = Application.get_application(__MODULE__) |> Atom.to_string
     runtime = get_runtime()
-    {output, _} = System.cmd(runtime, ["container", "ls", "--filter", "label=pot_#{app_name}", "--format", "{{json}}"])
+    {output, _} = System.cmd(runtime, ["container", "ls", "--filter", "label=pot_#{app_name()}", "--format", "{{json}}"])
     if output != "" do
       Jason.decode!(output)
     else
@@ -60,17 +68,15 @@ defmodule PotUtils do
   end
 
   def print_containers do
-    app_name = Application.get_application(__MODULE__) |> Atom.to_string
     runtime = get_runtime()
-    {output, _} = System.cmd(runtime, ["container", "ls", "--filter", "label=pot_#{app_name}"])
+    {output, _} = System.cmd(runtime, ["container", "ls", "--filter", "label=pot_#{app_name()}"])
     IO.puts "Containers"
     IO.puts output
   end
 
   def get_docker_images do
-    app_name = Application.get_application(__MODULE__) |> Atom.to_string
     runtime = get_runtime()
-    {output, _} = System.cmd(runtime, ["images", "--filter", "label=pot_#{app_name}", "--format", "{{json}}"])
+    {output, _} = System.cmd(runtime, ["images", "--filter", "label=pot_#{app_name()}", "--format", "{{json}}"])
     if output != "" do
       Jason.decode!(output)
     else
@@ -79,9 +85,8 @@ defmodule PotUtils do
   end
 
   def print_images do
-    app_name = Application.get_application(__MODULE__) |> Atom.to_string
     runtime = get_runtime()
-    {output, _} = System.cmd(runtime, ["images", "--filter", "label=pot_#{app_name}"])
+    {output, _} = System.cmd(runtime, ["images", "--filter", "label=pot_#{app_name()}"])
     IO.puts "Images"
     IO.puts output
   end
