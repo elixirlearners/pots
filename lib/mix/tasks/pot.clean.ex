@@ -2,13 +2,13 @@ defmodule Mix.Tasks.Pot.Clean do
   use Mix.Task
   require Logger
 
-  @shortdoc "Cleanup files and containers created using Pots. Options [--files | --images | --containers]. No option defaults to all"
+  @shortdoc "Cleanup files and containers created using Pots. Options [--files | --images | --containers]. No option defaults to all, excluding files"
   @impl Mix.Task
   def run([]) do
     Mix.Task.rerun("pot.clean", [:all])
   end
 
-  @shortdoc "Cleanup files and containers created using Pots. Options [--files | --images | --containers]. No option defaults to all"
+  @shortdoc "Cleanup files and containers created using Pots. Options [--files | --images | --containers]. No option defaults to all, excluding files"
   @impl Mix.Task
   def run(args) do
     Enum.each(args, &process_arg/1)
@@ -40,13 +40,14 @@ defmodule Mix.Tasks.Pot.Clean do
 
   @doc """
   This will run all cleanup functions. Note: it will stop all
-  containers before attempting to remove the images.
+  containers before attempting to remove the images. Excludes
+  running `remove_docker_files/0` since it may contain
+  changes the user wants to keep.
   - `remove_docker_files/0`
   - `stop_docker_containers/0`
   - `remove_docker_images/0`
   """
   def run_all() do
-    remove_docker_files()
     stop_docker_containers()
     remove_docker_images()
   end
