@@ -23,5 +23,5 @@ jobs:
         uses: synchronal/hex-publish-action@v3
         with:
           name: Pots
-          key: ${{ secrets.HEX_PM_KEY }}
+          key: ${{ secrets.HEX_API_KEY }}
           tag-release: false
