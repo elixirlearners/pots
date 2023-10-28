@@ -2,41 +2,31 @@ defmodule Mix.Tasks.Pot.Build do
   use Mix.Task
   require Logger
 
+  def run([]) do
+    Mix.Task.rerun("pot.build", [:no_name])
+  end
+
   @shortdoc "Podman utilities for building releases"
-  def run(args) do
-    runtime = get_runtime()
-    Logger.info("Using container runtime: #{Atom.to_string(runtime)}")
-    build_image(runtime, args)
+  def run([pot_name]) do
+    runtime = PotUtils.get_runtime()
+    Logger.info("Using container runtime: #{runtime}")
+    build_image(runtime, pot_name)
   end
 
-  defp get_runtime do
-    get_podman()
-  end
 
-  defp get_podman do
-    try do
-      System.cmd("podman", ["-v"])
-      :podman
-    catch
-      _ -> get_docker()
+  defp build_image(runtime, pot_name) do
+    docker_file = PotUtils.get_docker_file_for_pot(pot_name)
+    Logger.info("Building dockerfile: #{docker_file}")
+    if !File.exists?(docker_file) do
+      Mix.Task.run("pot.new",[])
     end
-  end
-  defp get_docker do
-    try do
-      System.cmd("docker", ["-v"])
-      :docker
-    rescue
-      _ -> raise "No container manager found. Please install docker or podman."
-    end
-  end
-
-  defp build_image(runtime, env) do
+    Logger.info("Creating dockerfile: #{docker_file}")
     app_name = Application.get_application(__MODULE__) |> Atom.to_string
-    manager(runtime, "build --build-arg MIX_ENV=#{env} -t #{app_name} .")
+    manager(runtime, "build -f #{docker_file} --build-arg MIX_ENV=dev -t #{app_name} --label pot_#{app_name}=pot")
   end
 
   defp manager(runtime, cmd) do
-    System.cmd(Atom.to_string(runtime), String.split(cmd, " "), into: IO.stream(:stdio, :line))
+    System.cmd(runtime, String.split(cmd, " "), into: IO.stream(:stdio, :line))
   end
 end
 
