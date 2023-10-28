@@ -2,11 +2,14 @@ defmodule Mix.Tasks.Pot.Run do
   use Mix.Task
   require Logger
 
+  @shortdoc "Will run the container created by Pot"
+  @impl Mix.Task
   def run([]) do
     Mix.Task.rerun("pot.run", ["-d"])
   end
 
-  @shortdoc "Podman utilities for building releases"
+  @shortdoc "Will run the container created by Pot"
+  @impl Mix.Task
   def run([interactive]) do
     if PotUtils.get_docker_images == [] do
       Mix.Task.run("pot.build", [])
@@ -22,13 +25,7 @@ defmodule Mix.Tasks.Pot.Run do
     end
     runtime_cmd = "run --rm #{inter_cmd}"
     Logger.info("Running the following docker command: #{runtime} #{runtime_cmd}")
-    run_container(
-      runtime, runtime_cmd
-    )
-  end
-
-  defp run_container(runtime, cmd) do
-    System.cmd(runtime, String.split(cmd, " "), into: IO.stream(:stdio, :line))
+    PotUtils.runtime_cmd(runtime_cmd)
   end
 end
 

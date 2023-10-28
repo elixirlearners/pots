@@ -3,7 +3,6 @@ defmodule Mix.Tasks.Pot.Info do
   require Logger
 
   @shortdoc "Returns information on container environment around your pots."
-
   @impl Mix.Task
   def run (_args) do
     IO.puts ("Docker files:")

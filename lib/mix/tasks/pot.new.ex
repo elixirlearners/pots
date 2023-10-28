@@ -1,13 +1,13 @@
 defmodule Mix.Tasks.Pot.New do
   use Mix.Task
 
-  @shortdoc "Podman utility for creating a new Dockerfile"
-
+  @shortdoc "Will generate a new Dockerfile for pot to use"
   @impl Mix.Task
   def run ([]) do
     Mix.Task.rerun("pot.new", [:no_name])
   end
 
+  @shortdoc "Will genereate a new Dockerfile for pot to use"
   @impl Mix.Task
   def run([pot_name]) do
     {dir, _resp} = System.cmd("pwd", [])
