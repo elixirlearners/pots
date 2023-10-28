@@ -1,19 +1,27 @@
 name: Publish to hex.pm
 
+env:
+  ELIXIR_VERSION: "1.14"
+  OTP_VERSION: "25.0.1"
+
 on:
   push:
     branches:
       - 'releases/v**'
 
 jobs:
-  publish:
+  publish: 
     runs-on: ubuntu-latest
     steps:
-      - name: Check out
-        uses: actions/checkout@v2
-
-      - name: Publish package to hex.pm
-        uses: wesleimp/action-publish-hex@v1
-        env:
-          HEX_API_KEY: ${{ secrets.HEX_API_KEY }}
-
+      - uses: actions/checkout@v3
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{ env.ELIXIR_VERSION }}
+          otp-version: ${{ env.OTP_VERSION }}
+      - name: Publish to Hex
+        uses: synchronal/hex-publish-action@v3
+        with:
+          name: Pots
+          key: ${{ secrets.HEX_PM_KEY }}
+          tag-release: false
